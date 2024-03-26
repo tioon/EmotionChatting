@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Token Reissue</title>
+</head>
+<body>
+<h1>Token Reissue</h1>
+<form th:action="@{/auth/reissue}" method="post">
+  <label>Access Token:</label><br>
+  <input type="text" name="accessToken" required><br><br>
+  <label>Refresh Token:</label><br>
+  <input type="text" name="refreshToken" required><br><br>
+  <button type="submit">Reissue Token</button>
+</form>
+</body>
+</html>
