@@ -7,12 +7,15 @@ import chatting.domain.auth.entity.Member;
 import chatting.domain.auth.repository.MemberRepository;
 import chatting.domain.refreshToken.entity.RefreshToken;
 import chatting.domain.refreshToken.repository.RefreshTokenRepository;
+import chatting.global.error.BusinessException;
+import chatting.global.error.ErrorCode;
 import chatting.global.token.TokenDto;
 import chatting.global.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +47,12 @@ public class AuthService {
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication=null;
+        try {
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } catch(AuthenticationException e){ // 부정확한 비밀번호
+            new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);

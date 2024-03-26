@@ -2,6 +2,8 @@ package chatting.domain.auth.service;
 
 import chatting.domain.auth.entity.Member;
 import chatting.domain.auth.repository.MemberRepository;
+import chatting.global.error.BusinessException;
+import chatting.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return memberRepository.findByEmail(username)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_EXISTS)); // 회원이 존재하지않을 때
     }
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
