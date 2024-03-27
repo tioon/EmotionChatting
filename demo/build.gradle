@@ -46,11 +46,11 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-	implementation group: 'org.webjars', name : 'sockjs-client', version: '1.1.2'
-	implementation group: 'org.webjars', name : 'stomp-websocket', version: '2.3.3-1'
-	implementation group: 'org.webjars.bower', name : 'vue', version: '2.5.16'
-	implementation group: 'org.webjars.bower', name : 'bootstrap', version: '4.3.1'
-	implementation group: 'org.webjars.bower', name : 'axios', version: '0.17.1'
+	implementation 'org.webjars:webjars-locator-core'
+	implementation 'org.webjars:sockjs-client:1.0.2'
+	implementation 'org.webjars:stomp-websocket:2.3.3'
+	implementation 'org.webjars:bootstrap:3.3.7'
+	implementation 'org.webjars:jquery:3.1.1-1'
 }
 
 tasks.named('test') {

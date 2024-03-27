@@ -55,9 +55,12 @@ public class SecurityConfig {
 
         // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
         http.authorizeHttpRequests()
-        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().permitAll();
+        /*.requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/chat/**").permitAll()
+                .requestMatchers("/sub/**").permitAll()
         .requestMatchers("/h2-console/**").permitAll()
-        .anyRequest().authenticated();   // 나머지 API 는 전부 인증 필요
+        .anyRequest().authenticated();   // 나머지 API 는 전부 인증 필요*/
 
 
         http.logout() // 로그아웃시 리다이렉트 URL 설정
