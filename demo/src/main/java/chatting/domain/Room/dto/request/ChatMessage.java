@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ChatMessage {
     private String roomId;
+    private String nickname;
     private String message;
 }
