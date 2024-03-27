@@ -1,7 +1,8 @@
 package chatting.global.config.security;
 
-import chatting.global.jwt.JwtAccessDeniedHandler;
-import chatting.global.jwt.JwtAuthenticationEntryPoint;
+import chatting.global.jwt.JwtSecurityConfig;
+import chatting.global.jwt.erroHandler.JwtAccessDeniedHandler;
+import chatting.global.jwt.erroHandler.JwtAuthenticationEntryPoint;
 import chatting.global.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,9 +40,9 @@ public class SecurityConfig {
         http.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class);
 
         // exception handling 할 때 우리가 만든 클래스를 추가
-        //http.exceptionHandling();
-        //.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        //.accessDeniedHandler(jwtAccessDeniedHandler);
+        http.exceptionHandling()
+        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        .accessDeniedHandler(jwtAccessDeniedHandler);
 
         http.headers()
         .frameOptions()

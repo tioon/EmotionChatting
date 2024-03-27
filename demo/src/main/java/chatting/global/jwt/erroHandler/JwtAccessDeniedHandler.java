@@ -1,4 +1,4 @@
-package chatting.global.jwt;
+package chatting.global.jwt.erroHandler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

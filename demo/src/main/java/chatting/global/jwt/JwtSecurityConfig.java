@@ -1,4 +1,4 @@
-package chatting.global.config.security;
+package chatting.global.jwt;
 
 import chatting.global.jwt.JwtFilter;
 import chatting.global.token.TokenProvider;
