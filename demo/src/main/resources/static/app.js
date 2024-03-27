@@ -12,13 +12,13 @@ function setConnected(connected) {
     $("#chat").html("");
 }
 
-function connect() {
+function connect(roomId) {
     var socket = new SockJS('/ws-stomp');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/chat', function (chat) {
+        stompClient.subscribe('/topic/' + roomId, function (chat) {
             showChat(JSON.parse(chat.body).content);
         });
     });
@@ -32,8 +32,8 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendMessage() {
-    stompClient.send("/app/chat", {}, JSON.stringify({'message': $("#message").val()}));
+function sendMessage(roomId) {
+    stompClient.send("/app/chat", {}, JSON.stringify({'roomId': roomId, 'message': $("#message").val()}));
 }
 
 function showChat(message) {
@@ -41,10 +41,21 @@ function showChat(message) {
 }
 
 $(function () {
-    $("form").on('submit', function (e) {
+    $("form").on('submit', function (e) { // submit 클릭 시 발동
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); }); // 방 입장
-    $( "#disconnect" ).click(function() { disconnect(); }); // 방 퇴장
-    $( "#send" ).click(function() { sendMessage(); }); // 메세지 보내기
+
+    $( "#connect" ).click(function() { // connect 클릭 시 발동
+        var roomId = $("#roomId").val();
+        connect(roomId);
+    });
+
+    $( "#disconnect" ).click(function() { // disconnect 클릭 시 발동
+     disconnect();
+    });
+
+    $( "#send" ).click(function() { // send 클릭 시 발동
+     var roomId = $("#roomId").val();
+     sendMessage(roomId);
+    });
 });
