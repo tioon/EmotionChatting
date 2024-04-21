@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,14 +20,18 @@ public class RedisMessagePublisher {  // 메세지 발행자
     private final RedisTemplate<String, Object> redisTemplate;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public void sendMessage(ChatMessage chatMessage) {
+    public void sendMessage(ChatMessage chatMessage , List<Map.Entry<String, Double>> top3Emotions) {
         String topic = "chatting"; // roomId를 기반으로 한 동적 토픽 이름 생성
         String jsonMessage;
 
         try {
             Map<String,Object> map = new HashMap<>();
             map.put("roomId", chatMessage.getRoomId());
-            map.put("message", chatMessage.getNickname() + "님: " +chatMessage.getMessage());
+            map.put("message", chatMessage.getNickname() + "님: " +chatMessage.getMessage()+" -------------- "+
+                    top3Emotions.get(0).getKey()+
+                    " " +top3Emotions.get(1).getKey()+
+                    " "+top3Emotions.get(2).getKey()
+                    );
             jsonMessage = objectMapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

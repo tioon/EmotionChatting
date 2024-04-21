@@ -38,9 +38,17 @@ public class RedisMessageSubscriber implements MessageListener {
             JsonNode rootNode = objectMapper.readTree(jsonMessage);
             String roomId = rootNode.get("roomId").asText(); // roomId 추출
             String messageContent = rootNode.get("message").asText(); // message 추출
-            log.info(roomId + " " + messageContent);
+            String emotion1 = rootNode.has("emotion1") ? rootNode.get("emotion1").asText() : "";
+            String emotion2 = rootNode.has("emotion2") ? rootNode.get("emotion2").asText() : "";
+            String emotion3 = rootNode.has("emotion3") ? rootNode.get("emotion3").asText() : "";
+            log.info(roomId + " " + messageContent+" "+emotion1+" "+emotion2+" "+emotion3);
             // 채팅 메시지를 WebSocket으로 클라이언트에게 전송
-            messagingTemplate.convertAndSend("/topic/" + roomId, ChatResponse.toResponse(HtmlUtils.htmlEscape(messageContent)));
+            messagingTemplate.convertAndSend("/topic/" + roomId, ChatResponse.toResponse(
+                    HtmlUtils.htmlEscape(messageContent),
+                    HtmlUtils.htmlEscape(emotion1),
+                    HtmlUtils.htmlEscape(emotion2),
+                    HtmlUtils.htmlEscape(emotion3)
+                    ));
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

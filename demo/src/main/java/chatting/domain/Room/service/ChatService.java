@@ -8,6 +8,7 @@ import chatting.global.redis.RedisMessagePublisher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -31,12 +32,15 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisMessagePublisher redisMessagePublisher;
     private final RestTemplate restTemplate;
+    @Value("${huggingface.token}")
+    private String token;
+
 
     public void sendChatting(ChatMessage chatMessage){
         String roomId = chatMessage.getRoomId();
         //messagingTemplate.convertAndSend("/topic/" + roomId, ChatResponse.toResponse(HtmlUtils.htmlEscape(chatMessage.getNickname()+ "님 : " + chatMessage.getMessage())));
-        emotionAnalyzeUsingHuggingFace(chatMessage.getMessage());
-        redisMessagePublisher.sendMessage(chatMessage);
+        List<Map.Entry<String, Double>> top3Emotions = emotionAnalyzeUsingHuggingFace(chatMessage.getMessage());
+        redisMessagePublisher.sendMessage(chatMessage, top3Emotions);
     }
 
     public void roomEnter(ChatMessage message){
@@ -48,11 +52,11 @@ public class ChatService {
         redisMessagePublisher.roomExit(message);
     }
 
-    public void emotionAnalyzeUsingHuggingFace(String message) {
+    public List<Map.Entry<String, Double>> emotionAnalyzeUsingHuggingFace(String message) {
         String url = "https://api-inference.huggingface.co/models/bhadresh-savani/bert-base-go-emotion";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        //headers.set("Authorization", "Bearer " + token);
+        headers.set("Authorization", "Bearer " + token);
 
         String inputJson = String.format("{\"inputs\": \"%s\"}", message);
         HttpEntity<String> requestEntity = new HttpEntity<>(inputJson, headers);
@@ -81,12 +85,14 @@ public class ChatService {
             for (Map.Entry<String, Double> emotion : top3Emotions) {
                 System.out.println(emotion.getKey() + " " + emotion.getValue());
             }
+            return top3Emotions;
 
         } catch (HttpServerErrorException e) {
             e.printStackTrace();
         } catch (RestClientException | IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 
