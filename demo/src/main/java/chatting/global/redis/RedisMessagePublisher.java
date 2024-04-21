@@ -49,4 +49,19 @@ public class RedisMessagePublisher {  // 메세지 발행자
         }
         redisTemplate.convertAndSend(topic,jsonMessage); // 메세지 발행
     }
+
+    public void roomExit(ChatMessage chatMessage){
+        String topic = "chatting"; // roomId를 기반으로 한 동적 토픽 이름 생성
+        String jsonMessage;
+
+        try {
+            Map<String,String> map = new HashMap<>();
+            map.put("roomId", chatMessage.getRoomId());
+            map.put("message", chatMessage.getNickname() + "님이 퇴장하셨습니다.");
+            jsonMessage = objectMapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        redisTemplate.convertAndSend(topic,jsonMessage); // 메세지 발행
+    }
 }

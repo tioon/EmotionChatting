@@ -26,5 +26,11 @@ public class ChatController {
         chatService.roomEnter(message);
     }
 
+    @MessageMapping("/exit")
+    //@SendTo("/topic/chat") 이건 어노테이션 활용방법
+    public void roomExit(ChatMessage message) throws Exception {
+        chatService.roomExit(message);
+    }
+
 
 }
